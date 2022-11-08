@@ -1,26 +1,42 @@
 class Pagination {
     constructor(_idTable, _items = [], _size = 10) {
         this.table = document.getElementById(_idTable)
+        console.log(this.table);
         this.items = _items
         this.size = _size
         this.page = 1
         //Meglio la proprietà del metodo se items o size NON possono variare
-        this.maxPages = Math.ceil(this.items.length / this.size)
-        this.getView()
-
+        this.maxPages = Math.ceil(this.items.length / this.size)        
         this.makePageButtons()
+        this.getView()
     }
 
     makePageButtons() {
+        //indeitro
+        let prevBtn = document.createElement("button")
+        prevBtn.innerText = "Indietro"
+        prevBtn.addEventListener("click", ()=>{
+            this.prev()
+        })
+        this.table.getElementsByClassName("pagine")[0].append(prevBtn)
+
+        //pulsanti pagine
         for(let i = 1; i <= this.maxPages; i++) {
-            console.log(i);
             let b = document.createElement("span")
             b.addEventListener("click", ()=> {
                 this.changePage(i)
             })
             b.innerText = i
-            this.table.getElementById("pagina").append(b)
+            this.table.getElementsByClassName("pagine")[0].append(b)
         }
+
+        //avanti
+        let nextBtn = document.createElement("button")
+        nextBtn.innerText = "Avanti"
+        nextBtn.addEventListener("click", ()=>{
+            this.next()
+        })
+        this.table.getElementsByClassName("pagine")[0].append(nextBtn)
     }
 
     changePage(p) {
@@ -64,6 +80,7 @@ class Pagination {
     }
 
     getView() {
+        console.log(this.table);
         let iStart = this.size * (this.page - 1)
         
         let iEndNonCompreso = iStart + this.size
@@ -78,10 +95,17 @@ class Pagination {
         }
 
         // document.getElementById("pagina").innerText = this.page
+        //PER OGNI SPAN NEL DIV PAGINE TOGLIE LA CLASSE ACTIVE A MENO CHE NON SIA LO SPAN DELLA PAGINA CORRENTE
+        Array.from(this.table.getElementsByTagName("span")).forEach((e, i)=>{
+            if(i == this.page - 1) {
+                e.classList.add("active")
+            } else {
+                e.classList.remove("active")
+            }
+        })
     }
 
     addRow(element) {
-        console.log("THIS", element);
         let tr = document.createElement("tr")
         let tdId = document.createElement("td")
         tdId.innerText = element.id
@@ -92,7 +116,7 @@ class Pagination {
 
         tr.append(tdId, tdNome, tdCognome)
 
-        document.getElementById("tbody").appendChild(tr)
+        this.table.getElementsByTagName("tbody")[0].appendChild(tr)
     }
 }
 
@@ -129,16 +153,18 @@ const arr = [
 ]
 
 // let p = new Pagination();
-let p1 = new Pagination("table2", arr.slice(2, 5));
-let p2 = new Pagination("table", arr, 3);
+let p1 = new Pagination("table", arr, 3);
+let p2 = new Pagination("table2", arr, 5);
 // let p3 = new Pagination(5);
 
-document.getElementById("avanti").addEventListener("click", (e)=>{
-    p2.next()
-})
-document.getElementById("indietro").addEventListener("click", (e)=>{
-    p2.prev()
-})
+
+//SPOSTATI NEL METODO MAKEBUTTONS, ORA CREO UN EVENT LISTENER PER I DUE PULSANTI CREATI DALLA CLASSE
+// document.getElementById("avanti").addEventListener("click", (e)=>{
+//     p2.next()
+// })
+// document.getElementById("indietro").addEventListener("click", (e)=>{
+//     p2.prev()
+// })
 
 
 //inserire nel documento
